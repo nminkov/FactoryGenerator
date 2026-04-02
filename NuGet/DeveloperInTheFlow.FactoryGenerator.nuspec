@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata>
 		<id>DeveloperInTheFlow.FactoryGenerator</id>
-		<version>3.8.0</version>
+		<version>3.9.2</version>
 		<title>Factory Generator (Roslyn)</title>
 		<authors>Pedro Pombeiro,Daniel Romero,Benjamin Burgy</authors>
 		<owners>Pedro Pombeiro</owners>
@@ -21,12 +21,13 @@
 		<file src="..\bin\Release\net48\DefaultTemplate.render" target="tools\DefaultTemplate.render" />
 		<file src="..\bin\Release\net48\FactoryGenerator.exe" target="tools\FactoryGenerator.exe" />
 		<file src="..\bin\Release\net48\FactoryGenerator.exe.config" target="tools\FactoryGenerator.exe.config" />
+		<file src="..\bin\Release\net48\BuildHost-net472\**" target="tools\BuildHost-net472\" />
+		<file src="..\bin\Release\net48\BuildHost-netcore\**" target="tools\BuildHost-netcore\" />
 		<file src="..\bin\Release\net48\CommandLine.dll" target="tools\" />
 		<file src="..\bin\Release\net48\Common.Logging.Core.dll" target="tools\" />
 		<file src="..\bin\Release\net48\Common.Logging.dll" target="tools\" />
 		<file src="..\bin\Release\net48\Common.Logging.NLog41.dll" target="tools\" />
 		<file src="..\bin\Release\net48\CSScriptLib.dll" target="tools\" />
-		<file src="..\bin\Release\net48\CSScriptLibrary.dll" target="tools\" />
 		<file src="..\bin\Release\net48\Humanizer.dll" target="tools\" />
 		<file src="..\bin\Release\net48\Microsoft.Bcl.AsyncInterfaces.dll" target="tools\" />
 		<file src="..\bin\Release\net48\Microsoft.Build.Locator.dll" target="tools\" />
@@ -40,7 +41,6 @@
 		<file src="..\bin\Release\net48\Microsoft.CodeAnalysis.Workspaces.dll" target="tools\" />
 		<file src="..\bin\Release\net48\Microsoft.CodeAnalysis.Workspaces.MSBuild.dll" target="tools\" />
 		<file src="..\bin\Release\net48\Microsoft.Extensions.DependencyModel.dll" target="tools\" />
-		<file src="..\bin\Release\net48\Mono.CSharp.dll" target="tools\" />
 		<file src="..\bin\Release\net48\Newtonsoft.Json.dll" target="tools\" />
 		<file src="..\bin\Release\net48\NLog.dll" target="tools\" />
 		<file src="..\bin\Release\net48\NuGet.Common.dll" target="tools\" />
@@ -64,7 +64,6 @@
 		<file src="..\bin\Release\net48\System.Memory.dll" target="tools\" />
 		<file src="..\bin\Release\net48\System.Numerics.Vectors.dll" target="tools\" />
 		<file src="..\bin\Release\net48\System.Reflection.Metadata.dll" target="tools\" />
-		<file src="..\bin\Release\net48\System.Reflection.TypeExtensions.dll" target="tools\" />
 		<file src="..\bin\Release\net48\System.Runtime.CompilerServices.Unsafe.dll" target="tools\" />
 		<file src="..\bin\Release\net48\System.Text.Encoding.CodePages.dll" target="tools\" />
 		<file src="..\bin\Release\net48\System.Text.Encodings.Web.dll" target="tools\" />

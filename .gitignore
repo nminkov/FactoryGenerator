@@ -52,3 +52,6 @@ packages/*/
 *.sln.ide/
 # Visual Studio 2015/2017 cache/options directory
 .vs/
+
+*/tools/**/*
+*/**/launchSettings.json

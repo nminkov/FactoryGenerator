@@ -9,11 +9,14 @@
     using CommandLine;
 
     using Common.Logging;
+
     using Microsoft.Build.Locator;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.MSBuild;
 
-    using NLog.Config;
+    using NLog;
+
+    using LogManager = Common.Logging.LogManager;
 
     internal class Program
     {
@@ -27,7 +30,8 @@
 
         static Program()
         {
-            ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.GetExecutingAssembly());
+            // Replaces obsolete ConfigurationItemFactory.Default.RegisterItemsFromAssembly(Assembly.GetExecutingAssembly());
+            NLog.LogManager.Setup().SetupExtensions(ext => ext.RegisterAssembly(Assembly.GetExecutingAssembly()));
 
             Logger = LogManager.GetLogger<Program>();
         }
@@ -42,15 +46,15 @@
 
         #region Methods
 
-        private static async Task GenerateFactoriesAsync(
-            string solutionPath,
-            IEnumerable<string> attributeImportList,
-            bool writeXmlDoc,
-            string templatePath,
-            bool forceGeneration)
+        private static async Task GenerateFactoriesAsync(string solutionPath,
+                                                         IEnumerable<string> attributeImportList,
+                                                         bool writeXmlDoc,
+                                                         string templatePath,
+                                                         bool forceGeneration)
         {
             var workspace = MSBuildWorkspace.Create();
-            workspace.WorkspaceFailed += (o, e) =>
+            workspace.WorkspaceFailed += (o,
+                                          e) =>
                                          {
                                              if (e.Diagnostic.Kind == WorkspaceDiagnosticKind.Failure
                                                  // related to WPF
@@ -76,20 +80,32 @@
 
             CommandLineOptions = result.Value;
 
+            var version = System.Diagnostics.FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+            Console.WriteLine("Factory Generator version {0}", version);
+            Console.WriteLine();
+            Console.WriteLine("Command line arguments:");
+            Console.WriteLine("  Solution (-s): {0}", CommandLineOptions.SolutionPath);
+            Console.WriteLine("  Template Path (-t): {0}", CommandLineOptions.TemplatePath);
+            Console.WriteLine("  Attribute Import List (-a): {0}", CommandLineOptions.AttributeImportList);
+            Console.WriteLine();
+
             try
             {
-                var vsInstances = MSBuildLocator.QueryVisualStudioInstances();
+                var vsInstances = MSBuildLocator.QueryVisualStudioInstances().ToArray();
                 var vs2017 = vsInstances.FirstOrDefault(x => x.Version.Major == 15);
                 var vs2019 = vsInstances.FirstOrDefault(x => x.Version.Major == 16);
                 var vs2022 = vsInstances.FirstOrDefault(x => x.Version.Major == 17);
+                var vs2026 = vsInstances.FirstOrDefault(x => x.Version.Major == 18);
 
-                VisualStudioInstance usedInstance = vs2022 ?? vs2019 ?? vs2017;
+                var usedInstance = vs2026 ?? vs2022 ?? vs2019 ?? vs2017;
                 if (usedInstance == null)
-                    throw new Exception("Could not find VS 2019 or VS 2017 installation");
+                    throw new Exception("Could not find VS2026, VS2022, VS2019 or VS2017 installation");
+
                 MSBuildLocator.RegisterInstance(usedInstance);
 
-                GenerateFactoriesAsync(CommandLineOptions.SolutionPath,
-                                       CommandLineOptions.AttributeImportList.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries),
+                GenerateFactoriesAsync(
+                                       CommandLineOptions.SolutionPath,
+                                       CommandLineOptions.AttributeImportList.Split([',', ';'], StringSplitOptions.RemoveEmptyEntries),
                                        CommandLineOptions.WriteXmlDoc,
                                        CommandLineOptions.TemplatePath,
                                        CommandLineOptions.ForceGeneration)
@@ -102,7 +118,7 @@
 
                 Environment.ExitCode = innerException.HResult;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Logger.Fatal(e.Message, e);
                 Environment.ExitCode = e.HResult;
